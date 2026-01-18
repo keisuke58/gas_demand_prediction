@@ -4,6 +4,10 @@
 
 気象データ、経済指標、時間要因などを用いてガス需要を高精度に予測し、SHAP/LIMEで需要変動の要因を解釈するプロジェクトです。
 
+## 🔗 GitHubリポジトリ
+
+**リポジトリURL**: https://github.com/keisuke58/gas_demand_prediction
+
 ## 🗂️ プロジェクト構造
 
 ```
