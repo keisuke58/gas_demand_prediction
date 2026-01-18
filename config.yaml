@@ -1,0 +1,79 @@
+# プロジェクト設定ファイル
+
+# データパス
+data:
+  raw_dir: "data/raw"
+  processed_dir: "data/processed"
+  external_dir: "data/external"
+  
+  # データファイル名
+  demand_file: "gas_demand.csv"
+  weather_file: "weather_data.csv"
+
+# モデル設定
+model:
+  # 訓練期間
+  train_start_date: "2020-01-01"
+  train_end_date: "2023-06-30"
+  
+  # 検証期間
+  val_start_date: "2023-07-01"
+  val_end_date: "2023-12-31"
+  
+  # テスト期間
+  test_start_date: "2024-01-01"
+  test_end_date: "2024-03-31"
+  
+  # モデルタイプ
+  models:
+    - xgboost
+    - random_forest
+    - prophet
+  
+  # XGBoostパラメータ
+  xgboost:
+    n_estimators: 100
+    max_depth: 6
+    learning_rate: 0.1
+    random_state: 42
+  
+  # Random Forestパラメータ
+  random_forest:
+    n_estimators: 100
+    max_depth: 10
+    random_state: 42
+  
+  # Prophetパラメータ
+  prophet:
+    yearly_seasonality: true
+    weekly_seasonality: true
+    daily_seasonality: false
+
+# 特徴量エンジニアリング
+features:
+  # ラグ特徴量
+  lags: [1, 7, 30]
+  
+  # 移動平均
+  moving_averages: [7, 30, 90]
+  
+  # 季節性特徴量
+  seasonal_features: true
+
+# 解釈可能性設定
+interpretability:
+  # SHAP設定
+  shap:
+    sample_size: 100  # 計算を高速化するためのサンプルサイズ
+    interaction_values: true
+  
+  # 可視化設定
+  visualization:
+    figure_size: [12, 8]
+    dpi: 300
+
+# 結果保存先
+results:
+  models_dir: "models"
+  figures_dir: "results/figures"
+  reports_dir: "results/reports"
