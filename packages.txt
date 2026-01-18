@@ -1,0 +1,1 @@
+# Streamlit Cloud用のパッケージリスト（requirements.txtの代わりに使用可能）
