@@ -13,7 +13,9 @@ xgboost>=1.7.0
 scikit-learn>=1.2.0
 
 # 解釈可能性（必須）
-shap>=0.41.0
+# 注意: Python 3.13を使用する場合は、shapの最新バージョンが必要です
+# Streamlit CloudのAdvanced settingsでPython 3.10または3.11を選択することを推奨
+shap>=0.50.0
 
 # 可視化（必須）
 matplotlib>=3.6.0

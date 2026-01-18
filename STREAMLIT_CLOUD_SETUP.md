@@ -17,8 +17,9 @@ https://share.streamlit.io/ にアクセス
    - **Repository**: `keisuke58/gas_demand_prediction`
    - **Branch**: `main`
    - **Main file path**: `streamlit_app.py`
-   - **Python version**: 3.10以上（`runtime.txt`で指定済み）
-3. 「Deploy!」ボタンをクリック
+3. **「Advanced settings」を展開**して、**Python version**を**3.10**または**3.11**に設定
+   - ⚠️ **重要**: Streamlit Cloudは`runtime.txt`を無視します。必ずここでPythonバージョンを設定してください
+4. 「Deploy!」ボタンをクリック
 
 **注意**: 初回デプロイ時は、依存パッケージのインストールに3-5分かかることがあります。
 
@@ -94,7 +95,18 @@ Streamlit Cloudの「Settings」から環境変数を設定できます。
 ### アプリが起動しない
 - Streamlit Cloudのログを確認
 - `streamlit_app.py` が正しく設定されているか確認
-- `runtime.txt` でPythonバージョンが指定されているか確認
+- **「Advanced settings」でPythonバージョンが3.10または3.11に設定されているか確認**
+  - ⚠️ `runtime.txt`は無視されるため、必ずダッシュボードで設定してください
+
+### エラー: "Cannot install on Python version 3.13"
+**原因**: Python 3.13は一部のパッケージ（特に`llvmlite`）と互換性がない
+
+**解決策**:
+1. Streamlit Cloudのダッシュボードでアプリを選択
+2. 「Settings」→「Advanced settings」を開く
+3. **Python version**を**3.10**または**3.11**に変更
+4. 「Save」をクリック
+5. アプリが自動的に再デプロイされます
 
 ### エラーが続く場合
 詳細は `TROUBLESHOOTING.md` を参照してください。
