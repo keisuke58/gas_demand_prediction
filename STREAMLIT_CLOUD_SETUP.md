@@ -17,8 +17,10 @@ https://share.streamlit.io/ にアクセス
    - **Repository**: `keisuke58/gas_demand_prediction`
    - **Branch**: `main`
    - **Main file path**: `streamlit_app.py`
-   - **Python version**: 3.10以上（自動検出）
+   - **Python version**: 3.10以上（`runtime.txt`で指定済み）
 3. 「Deploy!」ボタンをクリック
+
+**注意**: 初回デプロイ時は、依存パッケージのインストールに3-5分かかることがあります。
 
 ### ステップ4: デプロイ完了を待つ
 - 初回デプロイは3-5分かかります
@@ -77,14 +79,25 @@ Streamlit Cloudの「Settings」から環境変数を設定できます。
 ### デプロイエラー: モジュールが見つからない
 - `requirements.txt` にすべての依存パッケージが含まれているか確認
 - Streamlit Cloudのログを確認
+- バージョン指定を緩和（`>=`を使用）
+
+### デプロイエラー: インストールタイムアウト
+- `requirements.txt` から不要なパッケージを削除
+- オプショナルなパッケージを除外
+- パッケージのバージョン指定を緩和
 
 ### デプロイエラー: メモリ不足
 - `config.yaml` の `sample_size` を小さくする
 - データ期間を短くする
+- SHAP分析のサンプルサイズを減らす
 
 ### アプリが起動しない
 - Streamlit Cloudのログを確認
 - `streamlit_app.py` が正しく設定されているか確認
+- `runtime.txt` でPythonバージョンが指定されているか確認
+
+### エラーが続く場合
+詳細は `TROUBLESHOOTING.md` を参照してください。
 
 ## 📊 デプロイ状態の確認
 

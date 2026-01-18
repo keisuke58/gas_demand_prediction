@@ -17,8 +17,16 @@ import plotly.graph_objects as go
 import plotly.express as px
 from src.models.train import load_model, train_xgboost, train_random_forest, save_model
 from src.models.predict import predict_xgboost, predict_random_forest
-from src.interpretability.shap_analysis import calculate_shap_values, get_feature_importance
 from src.data.load_data import generate_sample_data, load_config
+
+# SHAP分析のインポート（オプショナル）
+try:
+    from src.interpretability.shap_analysis import calculate_shap_values, get_feature_importance
+    SHAP_AVAILABLE = True
+except ImportError:
+    SHAP_AVAILABLE = False
+    calculate_shap_values = None
+    get_feature_importance = None
 from src.data.preprocess import create_time_features, handle_missing_values
 from src.data.feature_engineering import create_all_features
 from src.models.evaluate import calculate_metrics
@@ -246,7 +254,17 @@ try:
     # 特徴量重要度
     st.subheader("🎯 特徴量重要度（SHAP）")
     
-    if st.button("SHAP分析を実行"):
+    # テストデータの確認
+    try:
+        config = load_config("config.yaml")
+        test_start = config['model']['test_start_date']
+        test_df = df[df.index >= test_start].copy()
+        
+        if len(test_df) == 0:
+            st.warning("⚠️ テストデータがありません。SHAP分析を実行できません。")
+        elif not SHAP_AVAILABLE:
+            st.warning("⚠️ SHAPパッケージがインストールされていません。`requirements.txt`に`shap>=0.41.0`が含まれているか確認してください。")
+        elif st.button("SHAP分析を実行"):
         with st.spinner("SHAP値を計算中..."):
             try:
                 # サンプルサイズを制限（計算時間を短縮）
@@ -277,8 +295,16 @@ try:
                 # テーブル表示
                 st.dataframe(importance_df.head(20), use_container_width=True)
                 
+            except ImportError as e:
+                st.error(f"❌ SHAPパッケージのインポートエラー: {e}")
+                st.info("`requirements.txt`に`shap>=0.41.0`が含まれているか確認してください。")
             except Exception as e:
-                st.error(f"SHAP分析中にエラーが発生しました: {e}")
+                st.error(f"❌ SHAP分析中にエラーが発生しました: {e}")
+                import traceback
+                with st.expander("詳細なエラー情報"):
+                    st.code(traceback.format_exc())
+    except Exception as e:
+        st.warning(f"テストデータの準備中にエラーが発生しました: {e}")
     
     st.markdown("---")
     
@@ -288,6 +314,34 @@ try:
     if st.checkbox("データを表示"):
         st.dataframe(df.tail(100), use_container_width=True)
 
+except ImportError as e:
+    st.error(f"❌ インポートエラーが発生しました: {e}")
+    st.info("**解決方法**:")
+    st.markdown("""
+    1. Streamlit Cloudのログを確認してください
+    2. `requirements.txt`に必要なパッケージがすべて含まれているか確認してください
+    3. パッケージのバージョン指定を緩和してください（`>=`を使用）
+    """)
+    import traceback
+    with st.expander("詳細なエラー情報"):
+        st.code(traceback.format_exc())
+    
+except FileNotFoundError as e:
+    st.error(f"❌ ファイルが見つかりません: {e}")
+    st.info("**解決方法**:")
+    st.markdown("""
+    1. プロジェクト構造を確認してください
+    2. 必要なファイルがGitHubリポジトリに含まれているか確認してください
+    """)
+    
 except Exception as e:
-    st.error(f"エラーが発生しました: {e}")
-    st.info("データとモデルを準備中です。しばらくお待ちください...")
+    st.error(f"❌ 予期しないエラーが発生しました: {e}")
+    st.info("**解決方法**:")
+    st.markdown("""
+    1. Streamlit Cloudのログを確認してください
+    2. エラーメッセージを確認し、TROUBLESHOOTING.mdを参照してください
+    3. 問題が解決しない場合は、GitHubのIssuesに報告してください
+    """)
+    import traceback
+    with st.expander("詳細なエラー情報"):
+        st.code(traceback.format_exc())
