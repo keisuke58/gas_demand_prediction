@@ -265,44 +265,49 @@ try:
         elif not SHAP_AVAILABLE:
             st.warning("⚠️ SHAPパッケージがインストールされていません。`requirements.txt`に`shap>=0.41.0`が含まれているか確認してください。")
         elif st.button("SHAP分析を実行"):
-        with st.spinner("SHAP値を計算中..."):
-            try:
-                # サンプルサイズを制限（計算時間を短縮）
-                sample_size = min(50, len(X_test))
-                X_sample = X_test.sample(n=sample_size, random_state=42)
-                
-                explainer, shap_values, X_sample = calculate_shap_values(
-                    model, X_sample, sample_size=None
-                )
-                
-                # 特徴量重要度を計算
-                importance_df = get_feature_importance(
-                    shap_values, X_sample.columns.tolist()
-                )
-                
-                # 可視化
-                fig = px.bar(
-                    importance_df.head(20),
-                    x='importance',
-                    y='feature',
-                    orientation='h',
-                    title='特徴量重要度トップ20',
-                    labels={'importance': '重要度', 'feature': '特徴量'}
-                )
-                fig.update_layout(height=600)
-                st.plotly_chart(fig, use_container_width=True)
-                
-                # テーブル表示
-                st.dataframe(importance_df.head(20), use_container_width=True)
-                
-            except ImportError as e:
-                st.error(f"❌ SHAPパッケージのインポートエラー: {e}")
-                st.info("`requirements.txt`に`shap>=0.41.0`が含まれているか確認してください。")
-            except Exception as e:
-                st.error(f"❌ SHAP分析中にエラーが発生しました: {e}")
-                import traceback
-                with st.expander("詳細なエラー情報"):
-                    st.code(traceback.format_exc())
+            with st.spinner("SHAP値を計算中..."):
+                try:
+                    # テストデータの準備
+                    target_col = "demand"
+                    feature_cols = [col for col in df.columns if col != target_col]
+                    X_test = test_df[feature_cols]
+                    
+                    # サンプルサイズを制限（計算時間を短縮）
+                    sample_size = min(50, len(X_test))
+                    X_sample = X_test.sample(n=sample_size, random_state=42)
+                    
+                    explainer, shap_values, X_sample = calculate_shap_values(
+                        model, X_sample, sample_size=None
+                    )
+                    
+                    # 特徴量重要度を計算
+                    importance_df = get_feature_importance(
+                        shap_values, X_sample.columns.tolist()
+                    )
+                    
+                    # 可視化
+                    fig = px.bar(
+                        importance_df.head(20),
+                        x='importance',
+                        y='feature',
+                        orientation='h',
+                        title='特徴量重要度トップ20',
+                        labels={'importance': '重要度', 'feature': '特徴量'}
+                    )
+                    fig.update_layout(height=600)
+                    st.plotly_chart(fig, use_container_width=True)
+                    
+                    # テーブル表示
+                    st.dataframe(importance_df.head(20), use_container_width=True)
+                    
+                except ImportError as e:
+                    st.error(f"❌ SHAPパッケージのインポートエラー: {e}")
+                    st.info("`requirements.txt`に`shap>=0.41.0`が含まれているか確認してください。")
+                except Exception as e:
+                    st.error(f"❌ SHAP分析中にエラーが発生しました: {e}")
+                    import traceback
+                    with st.expander("詳細なエラー情報"):
+                        st.code(traceback.format_exc())
     except Exception as e:
         st.warning(f"テストデータの準備中にエラーが発生しました: {e}")
     
